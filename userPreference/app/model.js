@@ -17,10 +17,15 @@ const DBConnectionDetails = {
         host: 'tymeplus-live.cjidhmpdfztz.af-south-1.rds.amazonaws.com',
         user: 'gcs_velogic',
         password: 'Tymeplus.live$2023$protected$2023',
+    },
+    RONGAI :{
+        host: 'rongai-tymeplus-live-db.cjidhmpdfztz.af-south-1.rds.amazonaws.com',
+        user: 'gcs_velogic',
+        password: 'rongaitymeplus',
     }
 };
 
-const SERVER = 'TEST';
+const SERVER = 'RONGAI';
 
 var connection = mysql.createConnection({
 
@@ -56,7 +61,9 @@ const getUserDetails = async(req,res)=>{
         let user_id = [];
         let qry = '';
         let qryRes = '';
-         qry = `select user_id  from users where status_id =1 and role_id in (1,2,3);`
+         qry = `SELECT user_department.user_id FROM user_department 
+         WHERE status_id = 1 AND role_id IN (1, 2, 3) 
+         GROUP BY user_department.user_id;`
          qryRes = await executeQuery(qry,[]);
          user_id.push(qryRes)
         user_id = Object.values(qryRes)
@@ -68,7 +75,7 @@ const getUserDetails = async(req,res)=>{
 //  REPORT 1 => attence Report
             qry = `INSERT INTO user_preference (user_preference_id, user_id, report_id, status_name) VALUES ('', ${data.user_id}, 1, 'true');`
             
-            // qryRes = await executeQuery(qry,[])
+            qryRes = await executeQuery(qry,[])
             console.log(qry)
 //  REPORT 2 => OverTime Report
             qry = 
@@ -78,17 +85,17 @@ const getUserDetails = async(req,res)=>{
 //  REPORT 3 => latCheckin Report
             qry = 
             `INSERT INTO user_preference (user_preference_id, user_id, report_id, status_name) VALUES ('', ${data.user_id}, 3, 'true');`
-            // qryRes = await executeQuery(qry,[])
+            qryRes = await executeQuery(qry,[])
             console.log(qry)
 //  REPORT 4 => earlyCheckOut
             qry = 
             `INSERT INTO user_preference (user_preference_id, user_id, report_id, status_name) VALUES ('', ${data.user_id}, 4, 'true');`
-            // qryRes = await executeQuery(qry,[])
+            qryRes = await executeQuery(qry,[])
             console.log(qry)
 //  REPORT 5 => absent Report
             qry = 
             `INSERT INTO user_preference (user_preference_id, user_id, report_id, status_name) VALUES ('', ${data.user_id}, 5, 'true');`
-            // qryRes = await executeQuery(qry,[])
+            qryRes = await executeQuery(qry,[])
             console.log(qry)
          })
 
